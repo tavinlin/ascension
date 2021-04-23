@@ -1,15 +1,17 @@
 using System;
 
-namespace Ascension{
-    class Player : Entity{
+namespace Ascension
+{
+    class Player : Entity
+    {
         public bool isDead{ get; set; }
         public Player(string name)
         {
             Name = name;
-            MaxHealth = 50;
+            MaxHealth = 10;
             CurrentHealth = MaxHealth;
-            AtkPoint = 10;
-            AmrPoint = 30;
+            AtkPoint = 1;
+            AmrPoint = 0;
             isDead = false;
         }
     }

@@ -1,4 +1,5 @@
 .vscode
+.vs
 src/Ascension/bin
 src/Ascension/obj
 test

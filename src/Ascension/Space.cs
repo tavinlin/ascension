@@ -1,8 +1,10 @@
 using System;
 
-namespace Ascension{
-    class Space{
-        public Monster Monster{ get; set; }
+namespace Ascension
+{
+    class Space
+    {
+        public Enemy Enemy{ get; set; }
         public bool isOccupied{ get; set; }
         public bool isExplored{ get; set; }
 
@@ -12,11 +14,11 @@ namespace Ascension{
             isExplored = false;
         }
 
-        public Space(Monster monster)
+        public Space(Enemy enemy)
         {
-            if(monster != null)
+            if(enemy != null)
             {
-                Monster = monster;
+                Enemy = enemy;
                 isOccupied = true;
             }
         }

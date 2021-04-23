@@ -1,111 +1,124 @@
 using System;
 using System.Collections.Generic;
+using Ascension.Utility;
 
 namespace Ascension
 {
     class Ascension
     {
+        private bool isPlaying;
+        private Player player;
         public void start()
         {
-            bool isPlaying = true;
-            // Show intro of the game
-            this.IntroMessage();
+            isPlaying = true;
+            string name = User.Input("What's your name? ");
+            player = new Player(name);
+            Console.Clear();
+            // Show intro banner of the game
+            Text.IntroBanner();
 
             while(isPlaying)
             {
                 // Setting up the game
-                string[] monName = new string[] {"Satan", "Kappa", "Zombie", "Banshee", "Anima", "Demon"};
-                var area = AreaSetup(10, monName);
-                Player player = new Player("Iorek");
+                Enemy[] enemies = LoadEnemies();
+                var area = Area.Setup(10, enemies);
 
-                while(Monster.InstanceCounter > 0 && player.isDead == false)
+                while(Enemy.InstanceCounter > 0 && player.isDead == false)
                 {
-                    Console.WriteLine($"There are {Monster.InstanceCounter} monsters in the area.");
+                    Console.WriteLine($"There are {Enemy.InstanceCounter} enemies in the area.");
                     Console.WriteLine($"1. {area[0].ExploreStr()} 2. {area[1].ExploreStr()} 3. {area[2].ExploreStr()} 4. {area[3].ExploreStr()} 5. {area[4].ExploreStr()}\n" + 
                     $"6. {area[5].ExploreStr()} 7. {area[6].ExploreStr()} 8. {area[7].ExploreStr()} 9. {area[8].ExploreStr()} 10. {area[9].ExploreStr()}");
                     // Number prompt
-                    int intInput = IntInput("Choose a spot from 1 - 10: ") - 1;
+                    int intInput = User.Int16Input("Choose a spot from 1 - 10: ") - 1;
                     var spot = area[intInput];
                     if(spot.isOccupied)
                     {
-                        Console.WriteLine($"You encounter {spot.Monster.Name}");
+                        Console.Clear();
+                        Console.WriteLine($"You encounter {spot.Enemy.Name}");
                         spot.isExplored = true;
                         bool isBattle = true;
+                        int damageDealt = 0;
                         Random rnd = new Random();
                         // start battle
                         while(isBattle)
                         {
-                            Console.WriteLine($"{player.Name}: {player.CurrentHealth} - {spot.Monster.Name}: {spot.Monster.CurrentHealth}");
-                            var atkInput = IntInput("Choose an attack: 1. vertical, 2. horizontal, 3. thrust: ");
+                            Console.WriteLine($"{player.Name}: {player.CurrentHealth} - {spot.Enemy.Name}: {spot.Enemy.CurrentHealth}");
+                            var atkInput = User.Int16Input("Choose an attack: 1. vertical, 2. horizontal, 3. thrust: ");
                             var playerOptions = new Dictionary<int, string>(){
                                 {1, "vertical"},
                                 {2, "horizontal"},
                                 {3, "thrust"}
                             };
-                            // TODO: Monster will loop through an array and start over the iteration in order simulate attack pattern
+                            // TODO: Enemy will loop through an array and start over the iteration in order simulate attack pattern
                             string[] monsterOptions = new string[] {"vertical", "horizontal", "thrust"};
                             switch(monsterOptions[rnd.Next(1,4) - 1])
                             {
                                 case "vertical":
-                                    Console.WriteLine("Monster chose vertical attack!");
+                                    Console.WriteLine("Enemy chose vertical attack!");
                                     if(playerOptions[atkInput] == "vertical")
                                     {
-                                        Console.WriteLine($"{player.Name} and {spot.Monster.Name} cancel each other attack.");
+                                        Console.WriteLine($"{player.Name} and {spot.Enemy.Name} cancel each other attack.");
                                     }
                                     else if(playerOptions[atkInput] == "horizontal")
                                     {
-                                        Console.WriteLine($"{player.Name} took damage!");
-                                        player.CurrentHealth -= spot.Monster.AtkPoint;
+                                        damageDealt = spot.Enemy.AtkPoint;
+                                        Console.WriteLine($"{player.Name} took {damageDealt} damage!");
+                                        player.CurrentHealth -= damageDealt;
                                     }
                                     else
                                     {
-                                        Console.WriteLine($"{spot.Monster.Name} took damage!");
-                                        spot.Monster.CurrentHealth -= player.AtkPoint;
+                                        damageDealt = player.AtkPoint;
+                                        Console.WriteLine($"{spot.Enemy.Name} took {damageDealt} damage!");
+                                        spot.Enemy.CurrentHealth -= damageDealt;
                                     }
                                     break;
                                 case "horizontal":
-                                    Console.WriteLine("Monster chose horizontal attack!");
+                                    Console.WriteLine("Enemy chose horizontal attack!");
                                     if(playerOptions[atkInput] == "horizontal")
                                     {
-                                        Console.WriteLine($"{player.Name} and {spot.Monster.Name} cancel each other attack.");
+                                        Console.WriteLine($"{player.Name} and {spot.Enemy.Name} cancel each other attack.");
                                     }
                                     else if(playerOptions[atkInput] == "thrust")
                                     {
-                                        Console.WriteLine($"{player.Name} took damage!");
-                                        player.CurrentHealth -= spot.Monster.AtkPoint;
+                                        damageDealt = spot.Enemy.AtkPoint;
+                                        Console.WriteLine($"{player.Name} took {damageDealt} damage!");
+                                        player.CurrentHealth -= damageDealt;
                                     }
                                     else
                                     {
-                                        Console.WriteLine($"{spot.Monster.Name} took damage!");
-                                        spot.Monster.CurrentHealth -= player.AtkPoint;
+                                        damageDealt = player.AtkPoint;
+                                        Console.WriteLine($"{spot.Enemy.Name} took {damageDealt} damage!");
+                                        spot.Enemy.CurrentHealth -= damageDealt;
                                     }
                                     break;
                                 case "thrust":
-                                    Console.WriteLine("Monster chose thrust attack");
+                                    Console.WriteLine("Enemy chose thrust attack");
                                     if(playerOptions[atkInput] == "thrust")
                                     {
-                                        Console.WriteLine($"{player.Name} and {spot.Monster.Name} cancel each other attack.");
+                                        Console.WriteLine($"{player.Name} and {spot.Enemy.Name} cancel each other attack.");
                                     }
                                     else if(playerOptions[atkInput] == "vertical")
                                     {
-                                        Console.WriteLine($"{player.Name} took damage!");
-                                        player.CurrentHealth -= spot.Monster.AtkPoint;
+                                        damageDealt = spot.Enemy.AtkPoint;
+                                        Console.WriteLine($"{player.Name} took {damageDealt} damage!");
+                                        player.CurrentHealth -= damageDealt;
                                     }
                                     else
                                     {
-                                        Console.WriteLine($"{spot.Monster.Name} took damage!");
-                                        spot.Monster.CurrentHealth -= player.AtkPoint;
+                                        damageDealt = player.AtkPoint;
+                                        Console.WriteLine($"{spot.Enemy.Name} took {damageDealt} damage!");
+                                        spot.Enemy.CurrentHealth -= damageDealt;
                                     }
                                     break;
                             }
-                            if(spot.Monster.CurrentHealth == 0)
+                            if(spot.Enemy.CurrentHealth <= 0)
                             {
-                                Console.WriteLine($"{spot.Monster.Name} Died!");
-                                Monster.InstanceCounter -= 1;
+                                Console.WriteLine($"{spot.Enemy.Name} Died!");
+                                Enemy.InstanceCounter -= 1;
                                 isBattle = false;
                                 spot.isOccupied = false;
                             }
-                            else if(player.CurrentHealth == 0)
+                            else if(player.CurrentHealth <= 0)
                             {
                                 Console.WriteLine($"{player.Name} Died!");
                                 isBattle = false;
@@ -124,73 +137,23 @@ namespace Ascension
             Console.WriteLine("Game Over!");
         }
 
-        private Space[] AreaSetup(int size, string[] monsters)
+        private Enemy[] LoadEnemies()
         {
-            var spaces = new Space[size];
-            int count = 0;
-            for(int i = 0; i < spaces.Length; i++)
+            Enemy[] enemies = new Enemy[]
             {
-                if(count < monsters.Length)
-                {
-                    // Add the monsters first
-                    spaces[i] = new Space(new Monster(monsters[count]));
-                    count += 1;
-                }
-                else
-                {
-                    // After adding all the monster. Instantiate all other spaces
-                    spaces[i] = new Space();
-                }
-            }
-            return this.Shuffle(spaces);
+                new Enemy("Satan", 14, 3, 0),
+                new Enemy("Kappa", 12, 1, 0),
+                new Enemy("Zombie", 4, 1, 0),
+                new Enemy("Banshee", 6, 2, 0),
+                new Enemy("Anima", 20, 4, 0),
+                new Enemy("Demon", 4, 2, 0)
+            };
+            return enemies;
         }
 
-        private void IntroMessage()
+        private void Battle(Player player, Space spot)
         {
-            var dottedLine = new String('-', 72);
-            string title = "Ascension v0.0.1";
-            int width = 72;
 
-            string msg = $"{dottedLine}\n"+
-                        $"{this.CenterTitle(width, title)}\n"+
-                        $"{dottedLine}\n"+
-                        $"Defeat all monsters in the area.\n";
-
-            Console.WriteLine(msg);
-        }
-
-        private string CenterTitle(int width, string title)
-        {
-            int space = width - title.Length;
-            int padLeft = space / 2 + title.Length;
-            return title.PadLeft(padLeft, ' ').PadRight(width, ' ');
-        }
-
-        private Space[] Shuffle(Space[] spaces)
-        {
-            Random rand = new Random();
-            for (int i = spaces.Length - 1; i > 0; i--)
-            {
-                int randIndex = rand.Next(0, i + 1);
-                Space temp = spaces[i];
-                spaces[i] = spaces[randIndex];
-                spaces[randIndex] = temp;
-            }
-            return spaces;
-        }
-
-        private string Input(string prompt)
-        {
-            Console.Write(prompt);
-            string input = Console.ReadLine();
-            return input;
-        }
-
-        private int IntInput(string prompt)
-        {
-            Console.Write(prompt);
-            string input = Console.ReadLine();
-            return Int16.Parse(input);
         }
     }
 }
