@@ -15,8 +15,7 @@ namespace Ascension.Utility
             int width = 72;
             string msg = $"{dottedLine}\n" +
                         $"{CenterTitle(width, title)}\n" +
-                        $"{dottedLine}\n" +
-                        $"Defeat all enemies in the area.\n";
+                        $"{dottedLine}\n";
             Console.WriteLine(msg);
         }
 

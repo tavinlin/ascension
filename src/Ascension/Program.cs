@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ascension.Utility;
 
 namespace Ascension
 {
@@ -7,7 +8,10 @@ namespace Ascension
     {
         static void Main(string[] args)
         {
-            var game = new Ascension();
+            Text.IntroBanner();
+            User.PressKey("Press any key to continue...");
+            var nameInput = User.Input("Enter your name: ", "Name cannot be blank.");
+            var game = new Ascension(nameInput);
             game.start();
         }
     }

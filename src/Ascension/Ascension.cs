@@ -8,14 +8,17 @@ namespace Ascension
     {
         private bool isPlaying;
         private Player player;
+
+        public Ascension(string name)
+        {
+            player = new Player(name);
+        }
         public void start()
         {
             isPlaying = true;
-            string name = User.Input("What's your name? ");
-            player = new Player(name);
+
             Console.Clear();
-            // Show intro banner of the game
-            Text.IntroBanner();
+            Console.WriteLine("Objective: Defeat all enemies in the area");
 
             while(isPlaying)
             {
@@ -29,7 +32,8 @@ namespace Ascension
                     Console.WriteLine($"1. {area[0].ExploreStr()} 2. {area[1].ExploreStr()} 3. {area[2].ExploreStr()} 4. {area[3].ExploreStr()} 5. {area[4].ExploreStr()}\n" + 
                     $"6. {area[5].ExploreStr()} 7. {area[6].ExploreStr()} 8. {area[7].ExploreStr()} 9. {area[8].ExploreStr()} 10. {area[9].ExploreStr()}");
                     // Number prompt
-                    int intInput = User.Int16Input("Choose a spot from 1 - 10: ") - 1;
+                    int intInput = User.Int16Input("Choose a spot from 1 - 10: ", "Not a number: ") - 1;
+                    // TODO: Add an input validation while selecting an area
                     var spot = area[intInput];
                     if (spot.isOccupied == true && spot.isExplored == false)
                     {
@@ -42,11 +46,13 @@ namespace Ascension
                     else if (spot.isExplored)
                     {
                         Console.WriteLine("You already explored this spot...");
+                        Console.Clear();
                     }
                     else
                     {
                         spot.isExplored = true;
                         Console.WriteLine("There is nothing in this spot...");
+                        Console.Clear();
                     }
                 }
             }
@@ -78,18 +84,18 @@ namespace Ascension
             while (isBattle)
             {
                 Console.WriteLine($"{player.Name}: {player.CurrentHealth} - {spot.Enemy.Name}: {spot.Enemy.CurrentHealth}");
-                var atkInput = User.Int16Input("Choose an attack: 1. vertical, 2. horizontal, 3. thrust: ");
+                var playerInput = User.DictInput(playerOptions, "Choose an attack: 1. vertical, 2. horizontal, 3. thrust: ", "Invalid input: ");
                 // Enemy will loop through a string array of options and start over the iteration in order simulate attack pattern
 
                 switch (generatedPattern[atkCount])
                 {
                     case "vertical":
                         Console.WriteLine("Enemy chose vertical attack!");
-                        if (playerOptions[atkInput] == "vertical")
+                        if (playerInput == "vertical")
                         {
                             Console.WriteLine($"{player.Name} and {spot.Enemy.Name} cancel each other attack.");
                         }
-                        else if (playerOptions[atkInput] == "horizontal")
+                        else if (playerInput == "horizontal")
                         {
                             damageDealt = spot.Enemy.AtkPoint;
                             Console.WriteLine($"{player.Name} took {damageDealt} damage!");
@@ -104,11 +110,11 @@ namespace Ascension
                         break;
                     case "horizontal":
                         Console.WriteLine("Enemy chose horizontal attack!");
-                        if (playerOptions[atkInput] == "horizontal")
+                        if (playerInput == "horizontal")
                         {
                             Console.WriteLine($"{player.Name} and {spot.Enemy.Name} cancel each other attack.");
                         }
-                        else if (playerOptions[atkInput] == "thrust")
+                        else if (playerInput == "thrust")
                         {
                             damageDealt = spot.Enemy.AtkPoint;
                             Console.WriteLine($"{player.Name} took {damageDealt} damage!");
@@ -123,11 +129,11 @@ namespace Ascension
                         break;
                     case "thrust":
                         Console.WriteLine("Enemy chose thrust attack");
-                        if (playerOptions[atkInput] == "thrust")
+                        if (playerInput == "thrust")
                         {
                             Console.WriteLine($"{player.Name} and {spot.Enemy.Name} cancel each other attack.");
                         }
-                        else if (playerOptions[atkInput] == "vertical")
+                        else if (playerInput == "vertical")
                         {
                             damageDealt = spot.Enemy.AtkPoint;
                             Console.WriteLine($"{player.Name} took {damageDealt} damage!");
@@ -143,17 +149,19 @@ namespace Ascension
                 }
                 if (spot.Enemy.CurrentHealth <= 0)
                 {
-                    Console.WriteLine($"{spot.Enemy.Name} Died!");
                     Enemy.InstanceCounter -= 1;
                     isBattle = false;
                     spot.isOccupied = false;
+                    Console.WriteLine($"{spot.Enemy.Name} Died!");
+                    User.PressKey("Press any key to continue...");
+                    Console.Clear();
                 }
                 else if (player.CurrentHealth <= 0)
                 {
-                    Console.WriteLine($"{player.Name} Died!");
                     isBattle = false;
                     player.isDead = true;
                     isPlaying = false;
+                    Console.WriteLine($"{player.Name} Died!");
                 }
 
                 atkCount += 1;
