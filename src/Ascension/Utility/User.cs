@@ -11,7 +11,8 @@ namespace Ascension.Utility
             string input = Console.ReadLine();
             while (String.IsNullOrEmpty(input))
             {
-                Console.Write(invalidMsg);
+                Console.WriteLine(invalidMsg);
+                Console.Write(prompt);
                 input = Console.ReadLine();
             }
             return input;
@@ -23,20 +24,21 @@ namespace Ascension.Utility
             int number;
             while(!int.TryParse(input, out number))
             {
-                Console.Write(invalidMsg);
+                Console.WriteLine(invalidMsg);
+                Console.Write(prompt);
                 input = Console.ReadLine();
             }
             return number;
         }
 
-        public static string DictInput(Dictionary<int,string> options, string prompt, string invalidMsg)
+        public static string DictInput(Dictionary<int,string> options, string prompt, string inputMsg, string invalidMsg)
         {
             string value;
-            int input = Int16Input(prompt, "Not a number: ");
+            int input = Int16Input(prompt, inputMsg);
             while (!options.TryGetValue(input, out value))
             {
                 Console.WriteLine(invalidMsg);
-                input = Int16Input(prompt, "Not a number: ");
+                input = Int16Input(prompt, inputMsg);
             }
             return value;
         }
@@ -45,6 +47,17 @@ namespace Ascension.Utility
         {
             Console.WriteLine(prompt);
             Console.ReadKey();
+        }
+
+        public static int ArrayInput(int arraySize, string prompt, string inputMsg, string invalidMsg)
+        {
+            int intInput = User.Int16Input(prompt, inputMsg) - 1;
+            while (intInput < 0 || intInput > arraySize - 1)
+            {
+                Console.WriteLine(invalidMsg);
+                intInput = User.Int16Input(prompt, inputMsg) - 1;
+            }
+            return intInput;
         }
     }
 }
